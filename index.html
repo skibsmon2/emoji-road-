@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>Emoji Road – Zoo & Phoenix Update</title>
+<title>Emoji Road – Zoo & Phoenix + Bases & Index</title>
 <style>
 :root{
   --bg1:#0b0c12;--bg2:#0f0f13;--panel:#171922;--panel-soft:#121421;
@@ -113,13 +113,14 @@ aside h2,main h2{margin:4px 0 8px;font-size:15px;color:#cbd5e1}
   background:#101423;border-radius:10px;border:1px solid #232738;padding:6px;font-size:11px;
 }
 .dealer-card-emoji,.trader-card-emoji,.zoo-emoji{font-size:20px;margin-bottom:2px}
-.index-box{margin-top:4px;padding:6px 8px;border-radius:8px;background:#101423;border:1px solid #232738}
+.index-box{margin-top:4px;padding:6px 8px;border-radius:8px;background:#101423;border:1px solid #232738;max-height:180px;overflow:auto}
 
+/* money pop */
 @keyframes pop{from{transform:scale(1)}50%{transform:scale(1.05)}to{transform:scale(1)}}
 .money-up{animation:pop .5s ease}
 .glowwhite{filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 12px #fff)}
 
-/* rarity colors (simple) */
+/* rarity colors */
 .r-Common{background:#e5ecf6}
 .r-Uncommon{background:#b6f3c9}
 .r-Rare{background:#a3d0ff}
@@ -140,11 +141,40 @@ aside h2,main h2{margin:4px 0 8px;font-size:15px;color:#cbd5e1}
 .r-Secret\ Lucky\ Block{background:#d1f7ff}
 .r-Insane\ Lucky\ Block{background:#ffc6b5}
 .r-Mythic\ Lucky\ Block{background:#ffe0ff}
-.r-Meme\ Lucky\ Block{background:#e0ffe0}
 .r-Trick\ Door{background:#fdd3ff}
+
+/* BASE THEMES */
+body.base-default{
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
+}
+body.base-fruit{
+  background:radial-gradient(circle at top,#274e1f,#050608 70%);
+}
+body.base-neon{
+  background:radial-gradient(circle at top,#1f1650,#020312 70%);
+}
+body.base-rainbow{
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb,#a6c1ee);
+}
+body.base-magma{
+  background:radial-gradient(circle at top,#3b0600,#050000 70%);
+}
+body.base-safari{
+  background:linear-gradient(180deg,#3b351c,#0b0c12);
+}
+body.base-futuristic{
+  background:radial-gradient(circle at top,#00f5ff,#020617 70%);
+}
+
+body.base-fruit .road{background:#305f2c;border-color:#214020;}
+body.base-neon .road{background:#141433;border-color:#262b6b;}
+body.base-rainbow .road{background:#ff8fa3;border-color:#cf4f7b;}
+body.base-magma .road{background:#4a1b18;border-color:#8a291c;}
+body.base-safari .road{background:#5b4b28;border-color:#3f341c;}
+body.base-futuristic .road{background:#0f172a;border-color:#233876;}
 </style>
 </head>
-<body>
+<body class="base-default">
 <header>
   <div class="stat" id="cashStat">$0</div>
   <div class="stat" id="rateStat">0 / sec</div>
@@ -170,7 +200,7 @@ aside h2,main h2{margin:4px 0 8px;font-size:15px;color:#cbd5e1}
     <div class="trader-grid" id="traderGrid"></div>
 
     <div class="section-title">Mr Luck 🍀</div>
-    <div class="small">15-min luck boosts & special items.</div>
+    <div class="small">15-min luck boosts for high rarities.</div>
     <div id="luckShop"></div>
 
     <div class="section-title">Zoo (Safari Tokens)</div>
@@ -181,12 +211,13 @@ aside h2,main h2{margin:4px 0 8px;font-size:15px;color:#cbd5e1}
     <div class="section-title">Achievements</div>
     <div class="small" id="achievementsBox">None yet.</div>
 
-    <div class="section-title">Codes</div>
-    <div class="small">Try BEYO or FREEMYTHIC.</div>
-    <div style="display:flex;gap:4px;margin-top:4px;">
-      <input id="codeInput" class="small" style="flex:1;padding:4px 6px;border-radius:8px;border:1px solid #232738;background:#0e111b;color:var(--text);" placeholder="Enter code">
-      <button class="btn-mini" id="codeBtn">Redeem</button>
-    </div>
+    <div class="section-title">Bases</div>
+    <div class="small" id="baseHint">Unlock bases by collecting special stuff.</div>
+    <div id="baseList" class="index-box"></div>
+
+    <div class="section-title">Emoji Index</div>
+    <div class="small" id="indexSummary">0 / ? discovered</div>
+    <div id="indexList" class="index-box"></div>
   </aside>
 
   <main>
@@ -225,19 +256,6 @@ aside h2,main h2{margin:4px 0 8px;font-size:15px;color:#cbd5e1}
           <button class="btn-mini" id="dragonBtn">Offer Beef</button>
           <span class="pill small" id="beefCountPill">Beef: 0</span>
         </div>
-
-        <div class="ws">
-          <h3>🧪 Spawn Potion Lab</h3>
-          <div class="small">🧪 2x spawns for 15 min • $10,000</div>
-          <button class="btn-mini" id="spawnPotionBtn">Buy Spawn Potion</button>
-          <span class="pill small" id="spawnPill">Spawn x1</span>
-        </div>
-
-        <div class="ws">
-          <h3>🍳 Sir Cooker Kitchen</h3>
-          <div class="small">Feed food emojis. 0.003% chance to summon 🧑‍🍳 (INSANELY TRANSCENDENT).</div>
-          <button class="btn-mini" id="cookBtn">Offer Food</button>
-        </div>
       </div>
     </div>
   </main>
@@ -262,7 +280,7 @@ const rarities=[
   {name:'Mythical',rate:160,cost:8000,weight:6},
   {name:'Godly',rate:420,cost:30000,weight:3},
   {name:'Secret',rate:1000,cost:120000,weight:1.3},
-  {name:'Troll',rate:9000,cost:600000,weight:0.4},   // now spawns
+  {name:'Troll',rate:9000,cost:600000,weight:0},
   {name:'Exotic',rate:2500,cost:400000,weight:0.8},
   {name:'Ultra Exotic',rate:6000,cost:1200000,weight:0.45},
   {name:'Insane',rate:15000,cost:4000000,weight:0.25},
@@ -274,46 +292,69 @@ const rarities=[
   {name:'Secret Lucky Block',rate:0,cost:350000,weight:0.6},
   {name:'Insane Lucky Block',rate:0,cost:900000,weight:0.25},
   {name:'Mythic Lucky Block',rate:0,cost:250000,weight:0.8},
-  {name:'Meme Lucky Block',rate:0,cost:500000,weight:0.4},
   {name:'Trick Door',rate:0,cost:45000,weight:0.4}
 ];
 const rarityByName=n=>rarities.find(r=>r.name===n);
 
+/* OG text pool */
+const OG_TEXT_POOL=[':3','$','*','(:','¥','£','€','§','%'];
+
+/* spawn pools */
 const nichePool=['🚡','🚠','☔️','🪫','🧗‍♂️','🧬','🛰️','🧪','🛟','🧊','🥶','🧯','🧲','🛢️','🛗','🛤️','🧭','🪵','🪙'];
 const commonPool=['😀','🙁','🦊','🐱','🐭','🐹','🐼','🐧','🐤','🌿','🍉','🍔','🍟','🍪','🍩','⚽️','🏀','🎲','🎈','🎮','📦','⭐️','💎','🔥','🌈','🌙'];
-const OG_TEXT_POOL=[':3','$','*','(:','¥','£','€','§','%'];
-const insanelyTransPool=['🌠','📲','🖲️','🕹️','💸','📟','🪬','💮','👁️‍🗨️','🎆','⛽️']; // dragon removed from road
 
-// Meme Lucky Block special emojis (Safari but earn money)
-const MEME_ALPHA_WOLF = '🐺😤';
-const MEME_SHARK_HORSE = '🦈🐴';
-const MEME_STRAWBERRY_ELEPHANT = '🍓🐘';
-const MEME_MEOWL = '😺🧠';
+/* 30+ fruits & veggies */
+const FRUIT_EMOJIS=[
+ '🍏','🍎','🍐','🍊','🍋','🍓','🍇','🍉','🍌','🍋‍🟩','🫐','🍈','🍒','🍑','🥭',
+ '🍆','🍅','🥝','🥥','🍍','🥑','🫛','🥦','🥬','🥒','🌶️','🫑','🌽','🥕','🫒','🍠','🫜','🥔','🧅','🧄'
+];
 
-// Zoo animals (cannot spawn on road)
+/* big misc emoji set (+ 🖕) */
+const EXTRA_EMOJIS=[
+ '🧑‍🧑‍🧒‍🧒','🧑‍🧒','🧑‍🧒‍🧒','🚻','🔣','🈁','📶','🎦','🚮','🆗','🆙','🆒','🆕','🆓','ℹ️',
+ '🔤','🔡','🔠','🔳','🔲',
+ '🕒','🕗','🕜','🕡','🕦','🕧','🕢','🕝','🕘','🕓','🕔','🕙','🕞','🕣','🕤','🕟','🕚','🕕','🕐','🕑','🕖','🕛','🕠','🕥',
+ '♣️','♠️',
+ '🔈','🔕','🔇','📣','🔉','📢','💬','💭','🔔',
+ '🇺🇸','🇬🇧',
+ '🍜','💷','🦴',
+ '🧑‍💻','👩‍💻','👨‍💻',
+ '🏖️','🧐','♾️',
+ '🖕'
+];
+
+/* apply extra pools */
+commonPool.push(...FRUIT_EMOJIS);
+nichePool.push(...EXTRA_EMOJIS);
+
+/* INSANELY TRANSCENDENT pool (no dragon here, dragon is special) */
+const insanelyTransPool=['🌠','📲','🖲️','🕹️','💸','📟','🪬','💮','👁️‍🗨️','🎆','⛽️'];
+
+/* Zoo animals (cannot spawn on road) */
 const zooAnimals=[
  '🦂','🪳','🪲','🐛','🪰','🕷️','🦎','🦍','🦓','🦛','🦏','🦬','🦘','🫏','🐎','🦙','🐐','🐊','🦧','🐪','🐃','🐖','🐩','🐑','🐕','🐏','🐈‍⬛','🦤','🦚',
  '🐇','🕊️','🦫','🐿️','🦔','🦦','🦥','🦝','🦜','🐓','🦢','🦨','🐁','🐀','🦡','🦐','🦞','🦀','🐡','🦑','🐙','🦕','🦟','🐞','🐝','🐗','🐺','🦉','🦅',
  '🐴','🦄','🦋','🐍','🐬','🐳'
 ];
-const zooPrices={};zooAnimals.forEach((e,i)=>{zooPrices[e]=5+Math.floor(i/4)*5;}); // gets pricier
-zooPrices['🦖']=1500; // T-rex now 1500 safari
+const zooPrices={};zooAnimals.forEach((e,i)=>{zooPrices[e]=5+Math.floor(i/4)*5;});
+const tRexEmoji='🦖';
+zooPrices[tRexEmoji]=1500; // harder T-rex
 
-// Lucky Block loot tables
+/* special income overrides (per emoji) */
+const SPECIAL_RATES={
+  'E':1000000,
+  '21':700000
+};
+
+/* Lucky sets (unchanged) */
 const LUCKY_SETS={
   'Godly Lucky Block' :[{r:'Godly',w:60},{r:'Secret',w:24},{r:'Exotic',w:10},{r:'Ultra Exotic',w:4},{r:'Insane',w:2}],
   'Secret Lucky Block':[{r:'Secret',w:55},{r:'Exotic',w:22},{r:'Ultra Exotic',w:12},{r:'Insane',w:7},{r:'Transcendent',w:3},{r:'INSANELY TRANSCENDENT',w:1}],
   'Insane Lucky Block':[ {r:'Insane',w:65},{r:'Transcendent',w:22},{r:'INSANELY TRANSCENDENT',w:13}],
-  'Mythic Lucky Block':[ {r:'Mythical',w:60},{r:'Godly',w:25},{r:'Secret',w:10},{r:'Exotic',w:5}],
-  'Meme Lucky Block':[
-    {r:'Secret',w:75},              // Alpha Wolf
-    {r:'Exotic',w:21},              // Shark Horse
-    {r:'Ultra Exotic',w:5},         // Strawberry Elephant
-    {r:'INSANELY TRANSCENDENT',w:1} // Meowl
-  ]
+  'Mythic Lucky Block':[ {r:'Mythical',w:60},{r:'Godly',w:25},{r:'Secret',w:10},{r:'Exotic',w:5}]
 };
 
-// Trick Door loot
+/* Trick Door loot */
 function openDoorLoot(){
   const r=Math.random()*100;
   if(r<75) return {emoji:'🍬',rarity:'Mythical'};
@@ -324,32 +365,31 @@ function openDoorLoot(){
   return {emoji:'🍬',rarity:'Mythical'};
 }
 
+/* ===== index list (ALL emojis we track) ===== */
+const ALL_INDEX_EMOJIS = Array.from(new Set([
+  ...commonPool,
+  ...nichePool,
+  ...zooAnimals,
+  tRexEmoji,
+  // special customs
+  '🤷🏿‍♂️','🍰🐈‍⬛','🐈‍⬛','🥀💔🤷🏿‍♂️🧮👴🏼',
+  // OG numbers + letters
+  '1','2','3','4','5','6','7','8','9','10','E','21'
+]));
+const ALL_INDEX_EMOJIS_SET=new Set(ALL_INDEX_EMOJIS);
+
 /* ===== state ===== */
 let money=0,rebirths=0,multiplier=1,nextId=1,paused=false;
 let currentLuck=1,luckUntil=0;
 let safariTokens=0;
 let achievements={phoenix:false};
 let dealerStock=[],traderStock=[],traderActive=false;
-let autoBuyEnabled=false;
+let bestMoneyEver=0;
+let indexSeen=new Set();
+let currentBaseKey='default';
 
-// events
-let eventType=null;      // "lava" | "candy" | null
-let eventUntil=0;
-let eventMultiplier=1;
-let lavaEventsSeen=0;
-let candyEventsSeen=0;
-
-// spawn potion
-let spawnMultiplier=1;
-let spawnBoostUntil=0;
-
-// codes
-let usedCodes=new Set();
-
-// emoji state
 const owned=new Map(); // {id,emoji,rarity,baseRate,level,isAnimal,isDoor}
 
-// DOM
 const toastEl=document.getElementById('toast');
 const roadEl=document.getElementById('road');
 const baseEl=document.getElementById('base');
@@ -375,797 +415,50 @@ const achievementsBox=document.getElementById('achievementsBox');
 const dragonBtn=document.getElementById('dragonBtn');
 const beefCountPill=document.getElementById('beefCountPill');
 const phoenixBtn=document.getElementById('phoenixBtn');
-const spawnPotionBtn=document.getElementById('spawnPotionBtn');
-const spawnPill=document.getElementById('spawnPill');
-const cookBtn=document.getElementById('cookBtn');
-const codeInput=document.getElementById('codeInput');
-const codeBtn=document.getElementById('codeBtn');
-const bodyEl=document.body;
+const baseList=document.getElementById('baseList');
+const baseHint=document.getElementById('baseHint');
+const indexSummary=document.getElementById('indexSummary');
+const indexList=document.getElementById('indexList');
 
-/* ===== UI hooks ===== */
-document.getElementById('pauseBtn').onclick=()=>{paused=!paused;notify(paused?'Paused':'Resumed',true);};
-document.getElementById('rebirthBtn').onclick=doRebirth;
-roadEl.addEventListener('pointerdown',e=>{
-  const span=e.target.closest('.spawn');if(!span||!roadEl.contains(span))return;
-  e.preventDefault();sClick();tryBuy(span);
-},{passive:false});
-
-/* legend */
-(function(){
-  const holder=document.getElementById('legend');
-  rarities.forEach(r=>{
-    const row=document.createElement('div');row.className='row';
-    const left=document.createElement('div');left.textContent=r.name;
-    const right=document.createElement('div');right.innerHTML=`<span class="chip ${'r-'+r.name.replaceAll(' ','\\ ')}">${r.name}</span>`;
-    const sub=document.createElement('div');sub.className='small';
-    sub.textContent=`${r.rate}/s • $${fmt(r.cost)}`;
-    const wrap=document.createElement('div');wrap.append(row,sub);holder.append(wrap);
-  });
-})();
-
-/* ===== luck shop ===== */
-const LUCKS=[
-  {name:'2x',mult:2,cost:100000},
-  {name:'4x',mult:4,cost:1000000},
-  {name:'6x',mult:6,cost:5000000},
-  {name:'8x',mult:8,cost:11500000},
-  {name:'10x',mult:10,cost:25500000},
-  {name:'67x',mult:67,cost:67600000}
-];
-(function(){
-  LUCKS.forEach(l=>{
-    const b=document.createElement('button');b.className='btn-mini luck';
-    b.textContent=`${l.name} • $${fmt(l.cost)}`;
-    b.onclick=()=>{
-      if(money<l.cost){notify('Not enough money for luck.',false);return;}
-      money-=l.cost;currentLuck=l.mult;luckUntil=Date.now()+15*60*1000;
-      luckStat.textContent='Luck: '+l.mult+'x';sRare();
-      // OG chance from 67x is super tiny now
-      if(l.mult===67 && Math.random()<0.00000008){
-        giveEmojiDirect('E','OG'); // best OG as reward
-        notify('Ultra lucky: OG E from 67x luck!',true);
-      }
-      updateStats(true);
-    };
-    const row=document.createElement('div');row.style.margin='2px 0';row.append(b);luckShop.append(row);
-  });
-
-  // Level 500 Potion
-  const lvBtn=document.createElement('button');
-  lvBtn.className='btn-mini luck';
-  lvBtn.textContent='Level 500 Potion • $100,000,000';
-  lvBtn.onclick=()=>{
-    if(money<100000000){notify('Need $100,000,000.',false);return;}
-    const list=[...owned.values()].filter(o=>!o.isAnimal && !o.isDoor);
-    if(!list.length){notify('No emoji to boost.',false);return;}
-    money-=100000000;
-    const target=list[0];
-    target.level=500;
-    notify('One emoji has been boosted to level 500!',true);
-    drawOwned();updateStats(true);
-  };
-  const row1=document.createElement('div');row1.style.margin='2px 0';row1.append(lvBtn);luckShop.append(row1);
-
-  // Auto Buy item
-  const abBtn=document.createElement('button');
-  abBtn.className='btn-mini luck';
-  abBtn.textContent='Auto Buy ≥ Godly • $45,000,000';
-  abBtn.onclick=()=>{
-    if(autoBuyEnabled){notify('Auto Buy already enabled.',false);return;}
-    if(money<45000000){notify('Need $45,000,000.',false);return;}
-    money-=45000000;
-    autoBuyEnabled=true;
-    notify('Auto Buy enabled: will auto-buy ≥Godly if you can afford it.',true);
-    updateStats(true);
-  };
-  const row2=document.createElement('div');row2.style.margin='2px 0';row2.append(abBtn);luckShop.append(row2);
-})();
-
-/* ===== spawn potion ===== */
-spawnPotionBtn.onclick=()=>{
-  if(money<10000){notify('Need $10,000.',false);return;}
-  money-=10000;
-  spawnMultiplier=2;
-  spawnBoostUntil=Date.now()+15*60*1000;
-  spawnPill.textContent='Spawn x2 (15m)';
-  notify('Spawn potion active: 2x emojis on road.',true);
-  updateStats(true);
+/* ===== BASE SYSTEM ===== */
+const SAFARI_ANIMALS_FOR_BASE = Array.from(new Set([...zooAnimals, tRexEmoji]));
+const BASES={
+  'default':{label:'Default',condition:()=>true},
+  'fruit':{label:'Fruit',condition:hasAllFruit},
+  'neon':{label:'Neon',condition:()=>countHighRarity()>=20},
+  'rainbow':{label:'Rainbow',condition:()=>bestMoneyEver>=10000000},
+  'magma':{label:'Magma',condition:()=>achievements.phoenix===true},
+  'safari':{label:'Safari',condition:hasAllSafariAnimals},
+  'futuristic':{label:'Futuristic',condition:()=>indexSeen.size===ALL_INDEX_EMOJIS.length}
 };
 
-/* ===== Sir Cooker ===== */
-const FOOD_EMOJIS = new Set([
-  '🍏','🍎','🍐','🍊','🍋','🍓','🍇','🍉','🍌','🫐','🍈','🍒','🍑','🥭','🍆','🍅','🥝','🥥','🍍',
-  '🥑','🥦','🥬','🥒','🌶️','🌽','🥕','🍠','🥔',
-  '🌭','🍔','🍟','🍕','🍜','🍪','🍩','🍰','🧁','🍿','🍗','🥩'
-]);
-cookBtn.onclick=()=>{
-  const foodList=[...owned.values()].filter(o=>FOOD_EMOJIS.has(o.emoji));
-  if(!foodList.length){notify('Sir Cooker: you have no food.',false);return;}
-  const snack=foodList[0];
-  owned.delete(snack.id);
-  // 0.003% = 0.00003
-  if(Math.random()<0.00003){
-    giveEmojiDirect('🧑‍🍳','INSANELY TRANSCENDENT',false);
-    notify('Sir Cooker appears! You obtained 🧑‍🍳!',true);
-    sRare();
-  }else{
-    notify('Sir Cooker didn’t show up this time.',false);
-  }
-  drawOwned();updateStats(true);refreshWorkshops();
-};
-
-/* ===== codes ===== */
-function giveRandomOfRarity(rarityName){
-  const r=rarityByName(rarityName);if(!r)return;
-  const em=pickEmojiContent(rarityName).text;
-  giveEmojiDirect(em,rarityName,false);
+function hasAllFruit(){
+  return FRUIT_EMOJIS.every(e=>indexSeen.has(e));
 }
-codeBtn.onclick=()=>{
-  const raw=(codeInput.value||'').trim().toUpperCase();
-  if(!raw){notify('Enter a code.',false);return;}
-  if(usedCodes.has(raw)){notify('Code already used.',false);codeInput.value='';return;}
-  if(raw==='BEYO'){
-    usedCodes.add(raw);
-    giveRandomOfRarity('Exotic');
-    notify('Code BEYO redeemed → free Exotic!',true);
-  }else if(raw==='FREEMYTHIC'){
-    usedCodes.add(raw);
-    giveRandomOfRarity('Mythical');
-    notify('Code FREEMYTHIC redeemed → free Mythical!',true);
-  }else{
-    notify('Unknown code.',false);
-  }
-  codeInput.value='';
-};
-
-/* ===== events (lava & candy) ===== */
-function applyEventVisuals(){
-  // reset
-  bodyEl.style.background='linear-gradient(180deg,var(--bg1),var(--bg2))';
-  roadEl.style.background='#cc1f1f';
-  roadEl.style.boxShadow='inset 0 0 30px rgba(0,0,0,.35)';
-
-  if(eventType==='lava'){
-    bodyEl.style.background='radial-gradient(circle at top,#3b0000,#050207)';
-    roadEl.style.background='#3a0606';
-    roadEl.style.boxShadow='inset 0 0 45px rgba(255,120,40,.6)';
-  }else if(eventType==='candy'){
-    bodyEl.style.background='linear-gradient(180deg,#ffb6e6,#ffd5f5)';
-    roadEl.style.background='#ff8ac7';
-    roadEl.style.boxShadow='inset 0 0 40px rgba(255,255,255,.6)';
-  }
+function hasAllSafariAnimals(){
+  return SAFARI_ANIMALS_FOR_BASE.every(e=>indexSeen.has(e));
 }
-function startEvent(type){
-  const now=Date.now();
-  eventType=type;
-  eventUntil=now+15*60*1000;
-  if(type==='lava'){
-    eventMultiplier=1.5;
-    lavaEventsSeen++;
-    notify('🔥 Lava Event! x1.5 income & volcanic road.',true);
-  }else if(type==='candy'){
-    eventMultiplier=2.1;
-    candyEventsSeen++;
-    notify('🍭 Candy Event! x2.1 income & more Trick Doors.',true);
-  }
-  applyEventVisuals();
-}
-function endEvent(){
-  if(!eventType)return;
-  notify((eventType==='lava'?'Lava':'Candy')+' event ended.',false);
-  eventType=null;
-  eventUntil=0;
-  eventMultiplier=1;
-  applyEventVisuals();
-}
-
-/* ===== dealer & trader ===== */
-const dealerItems=[
-  {emoji:'🥕',rarity:'Common'},
-  {emoji:'🎩',rarity:'Uncommon'},
-  {emoji:'🫟',rarity:'Rare'},
-  {emoji:'🧢',rarity:'Epic'},
-  {emoji:'🪖',rarity:'Legendary'},
-  {emoji:'🫎',rarity:'Mythical'},
-  {emoji:'🪢',rarity:'Godly'},
-  {emoji:'🪐',rarity:'Secret'},
-  {emoji:'🪨',rarity:'Insane'},
-  {emoji:'📝',rarity:'Insane'},
-  {emoji:'✂️',rarity:'Insane'},
-  {emoji:'👻',rarity:'Transcendent'},
-  {emoji:'🪼',rarity:'Transcendent'},
-  {emoji:'🐉',rarity:'INSANELY TRANSCENDENT'},
-  {emoji:'🥩',rarity:'Mythical'}, // Beef
-  {emoji:'🦃',rarity:'Insane'}    // Turkey
-];
-function restockDealer(){
-  dealerStock=[];
-  const pool=[...dealerItems];
-  while(dealerStock.length<4 && pool.length){
-    const idx=Math.floor(Math.random()*pool.length);
-    const it=pool.splice(idx,1)[0];
-
-    // ultra rare dealer dragon
-    if(it.emoji==='🐉' && Math.random()>0.0000003){
-      continue; // skip giving dragon most of the time
-    }
-
-    const r=rarityByName(it.rarity);
-    const price=Math.floor(r.cost*(0.8+Math.random()*0.8));
-    dealerStock.push({emoji:it.emoji,rarity:it.rarity,price,bought:0,max:10});
-  }
-  dealerStatus.textContent='Dealer ready.';
-  renderDealer();
-}
-function renderDealer(){
-  dealerGrid.innerHTML='';
-  dealerStock.forEach(item=>{
-    const card=document.createElement('div');card.className='dealer-card';
-    const em=document.createElement('div');em.className='dealer-card-emoji';em.textContent=item.emoji;
-    const rspan=document.createElement('div');rspan.className='small';
-    rspan.innerHTML=`<span class="chip ${'r-'+item.rarity.replaceAll(' ','\\ ')}">${item.rarity}</span>`;
-    const left=(item.max||10)-(item.bought||0);
-    const price=document.createElement('div');price.className='small';price.textContent='$'+fmt(item.price)+' • left: '+left;
-    const btn=document.createElement('button');btn.className='btn-mini buy';btn.textContent='Buy';btn.disabled=left<=0;
-    btn.onclick=()=>{
-      const remaining=(item.max||10)-(item.bought||0);
-      if(remaining<=0){notify('You already bought 10 of this.',false);return;}
-      if(money<item.price){notify('Not enough money.',false);return;}
-      money-=item.price;item.bought=(item.bought||0)+1;sBuy();
-      giveEmojiDirect(item.emoji,item.rarity,false);
-      updateStats(true);renderDealer();
-    };
-    card.append(em,rspan,price,btn);dealerGrid.append(card);
-  });
-}
-setInterval(restockDealer,3*60*1000);
-
-function traderAppear(){
-  traderActive=true;traderStock=[];
-  // Only Insane + Egg Pan now (no Trolls from Trader)
-  const ins=['☃️','🎫','🤹‍♂️','🎭','🏟️','🗼','🏪','🔌','🪪','🎏','🏁','🎨','🪁','🥌','🎯','🎳','🚁','🚏','🗿','🚧','🛰️','✈️','🚂','🩻','🖌️','💠','🏚️','🔊'];
-  for(let i=0;i<2;i++){
-    const e=ins[Math.floor(Math.random()*ins.length)];
-    traderStock.push({emoji:e,rarity:'Insane'});
-  }
-  traderStock.push({emoji:'🍳',rarity:'Transcendent'});
-  renderTrader();traderStatus.textContent='Trader here (1 trade).';
-  setTimeout(()=>{traderActive=false;traderStock=[];traderGrid.innerHTML='';traderStatus.textContent='Trader away.';},15*60*1000);
-}
-setInterval(traderAppear,60*60*1000);
-function renderTrader(){
-  traderGrid.innerHTML='';
-  if(!traderActive)return;
-  traderStock.forEach(item=>{
-    const card=document.createElement('div');card.className='trader-card';
-    const em=document.createElement('div');em.className='trader-card-emoji';em.textContent=item.emoji;
-    const rspan=document.createElement('div');rspan.className='small';
-    rspan.innerHTML=`<span class="chip ${'r-'+item.rarity.replaceAll(' ','\\ ')}">${item.rarity}</span>`;
-    const txt=document.createElement('div');txt.className='small';txt.textContent='Give 1 '+item.rarity;
-    const btn=document.createElement('button');btn.className='btn-mini trade';btn.textContent='Trade';
-    btn.onclick=()=>tradeFor(item);
-    card.append(em,rspan,txt,btn);traderGrid.append(card);
-  });
-}
-function tradeFor(item){
-  if(!traderActive){notify('Trader left.',false);return;}
-  const cand=[...owned.values()].find(o=>o.rarity===item.rarity && !o.isAnimal);
-  if(!cand){notify('No '+item.rarity+' to trade.',false);return;}
-  owned.delete(cand.id);giveEmojiDirect(item.emoji,item.rarity,false);
-  traderActive=false;traderStock=[];renderTrader();traderStatus.textContent='Trader away.';
-  notify('Trade successful.',true);
-}
-
-/* ===== spawn helpers ===== */
-function effectiveWeight(r){
-  let w=r.weight||0;
-  if(currentLuck>1 && ['Legendary','Mythical','Godly','Secret','Exotic','Ultra Exotic','Insane','Transcendent','INSANELY TRANSCENDENT','Newgen','OG'].includes(r.name)){
-    w*=currentLuck;
-  }
-  return w;
-}
-function pickRandomRarity(){
-  const tw=rarities.reduce((s,r)=>s+effectiveWeight(r),0);
-  let x=Math.random()*tw;
-  for(const r of rarities){
-    const w=effectiveWeight(r);if(!w)continue;
-    if(x<w)return r;x-=w;
-  }
-  return rarities[0];
-}
-function pickEmojiContent(rarityName){
-  // Meme Lucky Block uses specific emojis when opened, not here
-  if(rarityName==='INSANELY TRANSCENDENT'){
-    const pool=insanelyTransPool;
-    const e=pool[Math.floor(Math.random()*pool.length)];
-    return {text:e};
-  }
-  if(rarityName==='Transcendent'){
-    const pool=['🦿','🫆','🦾','🧞‍♂️','🎣','🗺️','🕋','⛩️','⛰️','🏗️','🛖','🏕️','🎢','🎡','🚦'];
-    return {text:pool[Math.floor(Math.random()*pool.length)]};
-  }
-  if(rarityName==='Newgen'){
-    return {text:'TTS'}; // Tung Tung Sahur badge
-  }
-  if(rarityName==='OG'){
-    if(Math.random()<0.33) return {text:'E'};
-    if(Math.random()<0.5) return {text:'21'};
-    if(Math.random()<0.5) return {text:'( ͡° ͜ʖ ͡° )'};
-    return {text:OG_TEXT_POOL[Math.floor(Math.random()*OG_TEXT_POOL.length)]};
-  }
-  if(rarityName.includes('Lucky Block')){
-    if(rarityName==='Meme Lucky Block') return {text:'😂'};
-    const icon=rarityName.startsWith('Godly')?'🧰':rarityName.startsWith('Secret')?'🎁':rarityName.startsWith('Insane')?'🎲':'💎';
-    return {text:icon};
-  }
-  if(rarityName==='Trick Door'){
-    return {text:'🚪'};
-  }
-  const high=['Legendary','Mythical','Godly','Secret','Exotic','Ultra Exotic','Insane','Transcendent','INSANELY TRANSCENDENT','Newgen','OG'];
-  const pool=(high.includes(rarityName)&&Math.random()<0.85)?nichePool:(Math.random()<0.25?nichePool:commonPool);
-  const e=pool[Math.floor(Math.random()*pool.length)];
-  if(zooAnimals.includes(e))return {text:'😀'}; // animals no longer spawn on road
-  return {text:e};
-}
-function spawnOne(r){
-  const span=document.createElement('div');span.className='spawn';
-  const lane=Math.random();span.style.top=(lane<0.33?'33%':lane<0.66?'50%':'67%');
-  span.dataset.rarity=r.name;span.dataset.cost=r.cost;span.dataset.rate=r.rate;
-  span.style.left='-60px';
-  const tag=document.createElement('div');tag.className=`tag ${'r-'+r.name.replaceAll(' ','\\ ')}`;tag.textContent=r.name;
-  span.append(tag);
-  const c=pickEmojiContent(r.name);
-  span.append(document.createTextNode(c.text));span.dataset.emojiText=c.text;
-  roadEl.append(span);
-
-  const goodRar=['Godly','Secret','Exotic','Ultra Exotic','Insane','Transcendent','INSANELY TRANSCENDENT','Newgen','OG'];
-  if(autoBuyEnabled && goodRar.includes(r.name) && money>=r.cost){
-    tryBuy(span);
-    return;
-  }
-
-  if(['Secret','Exotic','Ultra Exotic','Insane','Transcendent','INSANELY TRANSCENDENT','Newgen','OG'].includes(r.name)){notify(r.name+' spawned!',true);sRare();}
-  let x=-60;const speed=(r.name==='OG'?0.7:r.name==='Newgen'?0.75:r.name==='INSANELY TRANSCENDENT'?0.8:0.9+Math.random()*0.7);
-  function move(){
-    if(!paused){x+=speed;span.style.left=x+'px';}
-    if(x>roadEl.clientWidth+30){span.remove();cancelAnimationFrame(raf);}
-    else{raf=requestAnimationFrame(move);}
-  }
-  let raf=requestAnimationFrame(move);
-}
-function scheduleRandom(){
-  setInterval(()=>{
-    const r=pickRandomRarity();
-    const count=Math.max(1,spawnMultiplier);
-    for(let i=0;i<count;i++) spawnOne(r);
-  },6500);
-}
-function scheduleGuaranteed(){
-  setInterval(()=>spawnOne(rarityByName('Legendary')),5*60*1000);
-  setInterval(()=>spawnOne(rarityByName('Mythical')),10*60*1000);
-  setInterval(()=>spawnOne(rarityByName('Godly')),30*60*1000);
-  setInterval(()=>spawnOne(rarityByName('OG')),3*60*60*1000);
-}
-
-/* ===== economy ===== */
-function tryBuy(span){
-  const rarity=span.dataset.rarity;
-  const cost=+span.dataset.cost||0;
-  if(money<cost){notify('Need $'+fmt(cost),false);return;}
-  money-=cost;
-  const text=span.dataset.emojiText||span.textContent.trim();
-  if(rarity==='Trick Door'){
-    giveEmojiDirect(text,'Trick Door',false,true);
-  }else{
-    addOwned({id:nextId++,emoji:text,rarity,baseRate:+span.dataset.rate||0,level:1,isAnimal:false,isDoor:false});
-  }
-  span.remove();sBuy();updateStats(true);
-}
-function currentRate(){
-  let r=0;
+function countHighRarity(){
+  let c=0;
   owned.forEach(o=>{
-    if(!o.isAnimal) r+=o.baseRate*(1+(o.level-1)*0.25);
+    if(o.rarity==='Transcendent' || o.rarity==='INSANELY TRANSCENDENT') c++;
   });
-  return r*multiplier*eventMultiplier;
+  return c;
 }
-function tickIncome(){
-  setInterval(()=>{
-    const now=Date.now();
-    // spawn potion expiry
-    if(spawnMultiplier>1 && now>spawnBoostUntil){
-      spawnMultiplier=1;
-      spawnPill.textContent='Spawn x1';
-    }
-    // income
-    money+=currentRate();
-    const animalCount=[...owned.values()].filter(o=>o.isAnimal).length;
-    safariTokens+=animalCount*0.2;
-    updateStats();
-    updateSafari();
-  },1000);
+function applyBaseTheme(){
+  document.body.classList.remove(
+    'base-default','base-fruit','base-neon','base-rainbow',
+    'base-magma','base-safari','base-futuristic'
+  );
+  if(!BASES[currentBaseKey]) currentBaseKey='default';
+  document.body.classList.add('base-'+currentBaseKey);
 }
-
-/* ===== owned / base ===== */
-function addOwned(o){
-  owned.set(o.id,o);
-  drawOwned();refreshWorkshops();updateSafari();
-}
-function giveEmojiDirect(emoji,rarity,isAnimal=false,isDoor=false){
-  let r=rarityByName(rarity) || {rate:0};
-  let baseRate=isAnimal?0:r.rate;
-
-  // special OG buffs
-  if(rarity==='OG'){
-    if(emoji==='E'){baseRate=1000000;}
-    else if(emoji==='21'){baseRate=700000;}
-  }
-
-  if(isDoor){
-    const obj={id:nextId++,emoji,rarity:'Trick Door',baseRate:0,level:1,isAnimal:false,isDoor:true};
-    addOwned(obj);return;
-  }
-  const obj={id:nextId++,emoji,rarity,baseRate,level:1,isAnimal,isDoor:false};
-  owned.set(obj.id,obj);
-
-  // tiny chance 235x luck when any OG appears
-  if(rarity==='OG' && Math.random()<0.000000000009){
-    currentLuck=235;
-    luckUntil=Date.now()+15*60*1000;
-    money+=250000000;
-    luckStat.textContent='Luck: 235x';
-    notify('UNREAL LUCK: 235x luck & $250M from OG!',true);
-  }
-
-  drawOwned();refreshWorkshops();updateSafari();
-}
-function drawOwned(){
-  baseEl.innerHTML='';
-  const list=[...owned.values()].sort((a,b)=>b.baseRate-a.baseRate);
-  list.forEach(o=>{
-    const card=document.createElement('div');card.className='card';
-    const big=document.createElement('div');big.className='big';big.textContent=o.emoji;
-    const body=document.createElement('div');body.style.flex='1';
-    const h4=document.createElement('h4');h4.textContent=`${o.rarity} Lv.${o.level}`;
-    const small=document.createElement('div');small.className='small';
-    if(o.isAnimal)small.textContent='Zoo/animal • +Safari over time';
-    else if(o.isDoor)small.textContent='Open for candy & ghost!';
-    else small.textContent=`${fmt(o.baseRate*(1+(o.level-1)*0.25)*multiplier*eventMultiplier)}/s`;
-    const buttons=document.createElement('div');buttons.className='row-btns';
-
-    if(o.isDoor){
-      const open=document.createElement('button');open.className='btn-mini door';open.textContent='Open';
-      open.onclick=()=>openDoor(o.id);buttons.append(open);
-    }else if(!o.isAnimal && o.rarity.includes('Lucky Block')){
-      const open=document.createElement('button');open.className='btn-mini open';open.textContent='Open';
-      open.onclick=()=>openLuckyBlock(o.id,o.rarity);buttons.append(open);
-    }else if(!o.isAnimal){
-      const feed=document.createElement('button');feed.className='btn-mini feed';feed.textContent='Feed';
-      feed.onclick=()=>openFeedDialog(o.id);buttons.append(feed);
-    }
-
-    const sell=document.createElement('button');sell.className='btn-mini sell';sell.textContent='Sell';
-    sell.onclick=()=>{
-      const warnList=['Secret','Exotic','Ultra Exotic','Insane','Transcendent','INSANELY TRANSCENDENT','Newgen','OG'];
-      if(warnList.includes(o.rarity)){
-        const ok=confirm('This is '+o.rarity+'. Do you REALLY want to sell this item?');
-        if(!ok)return;
-      }
-      const r=rarityByName(o.rarity)||{cost:100};
-      const base=o.baseRate?o.baseRate*40:r.cost;
-      money+=Math.floor(base*0.5);
-      owned.delete(o.id);drawOwned();updateStats(true);refreshWorkshops();updateSafari();
-    };
-    buttons.append(sell);
-
-    body.append(h4,small,buttons);card.append(big,body);baseEl.append(card);
-  });
-}
-
-/* lucky blocks + door open */
-function weightedPick(p){const total=p.reduce((a,b)=>a+b.w,0);let x=Math.random()*total;for(const e of p){if(x<e.w)return e.r;x-=e.w;}return p[0].r;}
-function openLuckyBlock(id,name){
-  const o=owned.get(id);if(!o)return;
-  const table=LUCKY_SETS[name];if(!table){notify('No loot.',false);return;}
-  const result=weightedPick(table);
-  owned.delete(id);
-
-  let emoji;
-  if(name==='Meme Lucky Block'){
-    if(result==='Secret') emoji=MEME_ALPHA_WOLF;
-    else if(result==='Exotic') emoji=MEME_SHARK_HORSE;
-    else if(result==='Ultra Exotic') emoji=MEME_STRAWBERRY_ELEPHANT;
-    else emoji=MEME_MEOWL;
-    giveEmojiDirect(emoji,result,true); // safari-like but earns money
-    notify(`Opened Meme Lucky Block → ${emoji} (${result})`,true);
-  }else{
-    const em=pickEmojiContent(result).text;
-    giveEmojiDirect(em,result,false);
-    notify(`Opened ${name} → ${result}`,true);
-  }
-  drawOwned();refreshWorkshops();updateStats(true);
-}
-function openDoor(id){
-  const o=owned.get(id);if(!o)return;
-  const loot=openDoorLoot();
-  owned.delete(id);
-  giveEmojiDirect(loot.emoji,loot.rarity,false);
-  notify(`Trick Door gave ${loot.emoji} (${loot.rarity})`,true);
-}
-
-/* feed */
-function openFeedDialog(targetId){
-  const modal=document.createElement('div');
-  Object.assign(modal.style,{position:'fixed',inset:'0',background:'rgba(0,0,0,.5)',display:'grid',placeItems:'center',zIndex:9998});
-  const box=document.createElement('div');
-  Object.assign(box.style,{background:'#0e111b',border:'1px solid #303653',borderRadius:'12px',padding:'10px',width:'min(420px,92vw)',fontSize:'13px'});
-  box.innerHTML='<b>Feed emoji</b><br><span class="small">Higher rarity snack = +2 levels, else +1.</span>';
-  const select=document.createElement('select');select.style.width='100%';select.style.margin='8px 0';select.style.padding='6px';
-  const o0=document.createElement('option');o0.value='';o0.textContent='Choose emoji to consume…';select.append(o0);
-  owned.forEach(o=>{if(o.id===targetId||o.isAnimal||o.isDoor)return;const op=document.createElement('option');op.value=o.id;op.textContent=`${o.emoji} (${o.rarity})`;select.append(op);});
-  const row=document.createElement('div');row.style.display='flex';row.style.justifyContent='flex-end';row.style.gap='6px';
-  const cancel=document.createElement('button');cancel.className='btn-mini';cancel.textContent='Cancel';cancel.onclick=()=>modal.remove();
-  const feed=document.createElement('button');feed.className='btn-mini feed';feed.textContent='Feed';
-  feed.onclick=()=>{
-    const id=+select.value;if(!id){notify('Pick something.',false);return;}
-    const target=owned.get(targetId),snack=owned.get(id);if(!target||!snack){modal.remove();return;}
-    const idx=name=>rarities.findIndex(r=>r.name===name);
-    const add=idx(snack.rarity)>idx(target.rarity)?2:1;
-    target.level+=add;money+=Math.floor(snack.baseRate*10);
-    owned.delete(id);modal.remove();drawOwned();updateStats(true);refreshWorkshops();
-  };
-  row.append(cancel,feed);box.append(select,row);modal.append(box);document.body.append(modal);
-}
-
-/* fuse */
-let fuseSelected=new Set();
-function refreshFuse(){
-  fuseSelected.clear();fuseCountPill.textContent='Selected: 0/4';fuseListEl.innerHTML='';
-  const group={};
-  owned.forEach(o=>{
-    if(o.isAnimal||o.isDoor)return;
-    if(o.rarity.includes('Lucky Block')||o.rarity==='OG'||o.rarity==='Newgen')return;
-    (group[o.rarity]??=[]).push(o);
-  });
-  const keys=Object.keys(group);
-  fuseHint.textContent=keys.length?'Select 4 of same rarity.':'Need emojis first.';
-  keys.forEach(rname=>{
-    const items=group[rname],wrap=document.createElement('div');
-    wrap.style.border='1px solid #20233a';wrap.style.borderRadius='9px';wrap.style.padding='6px';
-    const title=document.createElement('div');title.innerHTML=`<b>${rname}</b> (${items.length})`;
-    const list=document.createElement('div');
-    list.style.display='grid';list.style.gridTemplateColumns='repeat(auto-fill,minmax(42px,1fr))';list.style.gap='4px';list.style.marginTop='4px';
-    items.forEach(o=>{
-      const b=document.createElement('button');b.className='btn-mini';b.style.padding='4px';b.textContent=o.emoji;
-      b.onclick=()=>{
-        if(fuseSelected.has(o.id)){fuseSelected.delete(o.id);b.style.outline='none';}
-        else if(fuseSelected.size<4){fuseSelected.add(o.id);b.style.outline='2px solid #4fd1c5';}
-        fuseCountPill.textContent=`Selected: ${fuseSelected.size}/4`;
-      };
-      list.append(b);
-    });
-    wrap.append(title,list);fuseListEl.append(wrap);
-  });
-}
-const nextMap={
-  'Common':'Uncommon','Uncommon':'Rare','Rare':'Epic','Epic':'Legendary',
-  'Legendary':'Mythical','Mythical':'Godly','Godly':'Secret','Secret':'Exotic',
-  'Exotic':'Ultra Exotic','Ultra Exotic':'Insane','Troll':'Insane',
-  'Insane':'Transcendent','Transcendent':'INSANELY TRANSCENDENT','INSANELY TRANSCENDENT':'Newgen','Newgen':'OG'
-};
-function nextRarityName(name){return nextMap[name]||null;}
-fuseBtn.onclick=()=>{
-  if(fuseSelected.size!==4){notify('Need exactly 4.',false);return;}
-  let rname=null,ok=true;const ids=[...fuseSelected];
-  ids.forEach((id,i)=>{const o=owned.get(id);if(!o)ok=false;if(i===0)rname=o.rarity;if(o&&o.rarity!==rname)ok=false;});
-  if(!ok){notify('All 4 must match rarity.',false);return;}
-  const next=nextRarityName(rname);if(!next){notify('Cannot fuse higher.',false);return;}
-  ids.forEach(id=>owned.delete(id));
-  const em=pickEmojiContent(next).text;
-  giveEmojiDirect(em,next,false);
-  notify(`Fused 4 × ${rname} → ${next}`,true);
-  refreshFuse();updateStats(true);
-};
-
-/* crafts (you can add more later) */
-const recipes=[
-  {label:'🙁 + 🙁 → 😭 (Epic)',in:[['🙁',2]],out:{emoji:'😭',rarity:'Epic'}},
-  {label:'❤️ + 🔥 → ❤️‍🔥 (Mythical)',in:[['❤️',1],['🔥',1]],out:{emoji:'❤️‍🔥',rarity:'Mythical'}},
-  {label:'🦃×4 + 🔥×4 + ❤️‍🔥×3 → 🐦‍🔥 (INSANE T)',in:[['🦃',4],['🔥',4],['❤️‍🔥',3]],out:{emoji:'🐦‍🔥',rarity:'INSANELY TRANSCENDENT'}},
-  {label:'🪨 + 📝 + ✂️ → 🪨📄✂️ (Transcendent)',in:[['🪨',1],['📝',1],['✂️',1]],out:{emoji:'🪨📄✂️',rarity:'Transcendent'}},
-  {label:'💸×8 + 💰×5 → 🤑 (Transcendent)',in:[['💸',8],['💰',5]],out:{emoji:'🤑',rarity:'Transcendent'}},
-  {label:'🐷 + 🐖×2 → 🐗 (Mythical)',in:[['🐷',1],['🐖',2]],out:{emoji:'🐗',rarity:'Mythical'}},
-  {label:'🔞 + 🍇 → 🍷 (Rare)',in:[['🔞',1],['🍇',1]],out:{emoji:'🍷',rarity:'Rare'}},
-  {label:'🥈 + 🥉 → 🥇 (Uncommon)',in:[['🥈',1],['🥉',1]],out:{emoji:'🥇',rarity:'Uncommon'}},
-  {label:'🥇 + 🥇 → 🎖️ (Rare)',in:[['🥇',2]],out:{emoji:'🎖️',rarity:'Rare'}},
-  {label:'🎖️ + 🎖️ → 🏅 (Epic)',in:[['🎖️',2]],out:{emoji:'🏅',rarity:'Epic'}},
-  {label:'🏅×3 + 🥇 + 🎖️ → 🏆 (Legendary)',in:[['🏅',3],['🥇',1],['🎖️',1]],out:{emoji:'🏆',rarity:'Legendary'}},
-  {label:'🎲🧩 + 🧩🎲 → 🎰 (Mythical)',in:[['🎲🧩',1],['🧩🎲',1]],out:{emoji:'🎰',rarity:'Mythical'}},
-  {label:'💺×9 + 🚝 + 🚁 → 🛩️ (Transcendent)',in:[['💺',9],['🚝',1],['🚁',1]],out:{emoji:'🛩️',rarity:'Transcendent'}},
-  {label:'💰×18 + 💸 + 💵×15 → 🏦 (INSANE)',in:[['💰',18],['💸',1],['💵',15]],out:{emoji:'🏦',rarity:'Insane'}},
-  {label:'💯 + 🅰️ + ⁉️ → @ (OG)',in:[['💯',1],['🅰️',1],['⁉️',1]],out:{emoji:'@',rarity:'OG'}},
-  {label:'🏠 + 🌪️ → 🏚️ (Epic)',in:[['🏠',1],['🌪️',1]],out:{emoji:'🏚️',rarity:'Epic'}},
-  {label:'🎡 + 🏗️ + 🛤️ → 🎢 (Mythical)',in:[['🎡',1],['🏗️',1],['🛤️',1]],out:{emoji:'🎢',rarity:'Mythical'}},
-  {label:'🥚 + 🐥 → 🐣 (Uncommon)',in:[['🥚',1],['🐥',1]],out:{emoji:'🐣',rarity:'Uncommon'}},
-  {label:'📎 + 📎 → 🖇️ (Common)',in:[['📎',2]],out:{emoji:'🖇️',rarity:'Common'}},
-  {label:'🎯 + 📥 → 🧮 (Rare)',in:[['🎯',1],['📥',1]],out:{emoji:'🧮',rarity:'Rare'}}
-];
-function emojiCounts(){
-  const c={};owned.forEach(o=>{if(!o.emoji)return;c[o.emoji]=(c[o.emoji]||0)+1;});return c;
-}
-function refreshCraft(){
-  craftList.innerHTML='';
-  const counts=emojiCounts();
-  recipes.forEach(rec=>{
-    const row=document.createElement('div');
-    row.style.border='1px solid #232738';row.style.borderRadius='9px';row.style.padding='4px';
-    const top=document.createElement('div');top.className='small';top.textContent=rec.label;
-    const can=Math.min(...rec.in.map(([em,n])=>Math.floor((counts[em]||0)/n)||0));
-    const bottom=document.createElement('div');bottom.style.display='flex';bottom.style.justifyContent='space-between';bottom.style.alignItems='center';bottom.style.marginTop='2px';
-    const pill=document.createElement('span');pill.className='pill';pill.textContent='Can craft: '+can;
-    const btn=document.createElement('button');btn.className='btn-mini';btn.textContent='Craft';btn.disabled=!can;
-    btn.onclick=()=>doCraft(rec);
-    bottom.append(pill,btn);row.append(top,bottom);craftList.append(row);
-  });
-}
-function doCraft(rec){
-  const counts=emojiCounts();
-  for(const [em,n] of rec.in){if((counts[em]||0)<n){notify('Not enough pieces.',false);return;}}
-  const toRemove=[];
-  rec.in.forEach(([em,n])=>{
-    let need=n;owned.forEach(o=>{if(need>0 && o.emoji===em){toRemove.push(o.id);need--;}}); 
-  });
-  toRemove.forEach(id=>owned.delete(id));
-  giveEmojiDirect(rec.out.emoji,rec.out.rarity,false);
-  notify('Crafted: '+rec.label,true);
-  refreshWorkshops();updateStats(true);
-}
-
-/* dragon shrine (Beef) */
-dragonBtn.onclick=()=>{
-  const beef=[...owned.values()].find(o=>o.emoji==='🥩');
-  if(!beef){notify('You need 1 Beef 🥩 (Mythic).',false);return;}
-  owned.delete(beef.id);
-  const gotDragon=Math.random()<0.000003?true:(Math.random()<0.0001);
-  if(gotDragon){
-    giveEmojiDirect('🐉','INSANELY TRANSCENDENT',false);
-    notify('The Dragon Lord grants you 🐉!',true);sRare();
-  }else{
-    notify('Dragon Lord refuses. Maybe next time…',false);
-  }
-  updateBeefCount();
-};
-function updateBeefCount(){
-  const beefCount=[...owned.values()].filter(o=>o.emoji==='🥩').length;
-  beefCountPill.textContent='Beef: '+beefCount;
-}
-
-/* Phoenix Rebirth */
-phoenixBtn.onclick=()=>{
-  const moneyReq=10000000;
-  if(money<moneyReq){notify('Need $10,000,000 for Phoenix Rebirth.',false);return;}
-  const trans=[...owned.values()].filter(o=>o.rarity==='Transcendent'||o.rarity==='INSANELY TRANSCENDENT');
-  if(trans.length<3){notify('Need 3 Transcendents/ITs.',false);return;}
-  const turkey=[...owned.values()].find(o=>o.emoji==='🦃');
-  if(!turkey){notify('Need 1 🦃 (Insane).',false);return;}
-  if(!confirm('Phoenix Rebirth: lose everything for a guaranteed 🐦‍🔥?\n(This will hard reset your progress.)'))return;
-  money=0;owned.clear();multiplier=1;rebirths=0;
-  giveEmojiDirect('🐦‍🔥','INSANELY TRANSCENDENT',false);
-  achievements.phoenix=true;
-  drawOwned();refreshWorkshops();updateBeefCount();updateSafari();updateAchievements();updateStats(true);
-  notify('Phoenix Rebirth complete! 🐦‍🔥',true);
-};
-function updateAchievements(){
-  const list=[];
-  if(achievements.phoenix)list.push('🔥 The Phoenix Rebirth');
-  achievementsBox.textContent=list.length?list.join(', '):'None yet.';
-}
-
-/* rebirth */
-function doRebirth(){
-  const cost=Math.floor(100000*Math.pow(2,rebirths));
-  if(money<cost){notify('Need $'+fmt(cost)+' to rebirth.',false);return;}
-  if(!confirm('Rebirth for +50% income?\nCost: $'+fmt(cost)))return;
-  money=0;owned.clear();multiplier=+((1+(rebirths+1)*0.5).toFixed(2));rebirths++;
-  drawOwned();refreshWorkshops();updateBeefCount();updateSafari();updateStats(true);
-}
-
-/* stats + notify */
-function fmt(n){return n.toLocaleString();}
-function updateStats(pulse){
-  const now=Date.now();
-  if(now>luckUntil){currentLuck=1;luckStat.textContent='Luck: 1x';}
-  if(eventType && now>eventUntil){endEvent();}
-  cashStat.textContent='$'+fmt(Math.floor(money));
-  rateStat.textContent=fmt(Math.floor(currentRate()))+' / sec';
-  rebirthStat.textContent='Rebirths: '+rebirths+' (x'+multiplier.toFixed(2)+')';
-  if(pulse){cashStat.classList.add('money-up');setTimeout(()=>cashStat.classList.remove('money-up'),400);}
-}
-function notify(html,good){
-  const t=document.createElement('div');t.className='t';
-  t.innerHTML=(good?'✅ ':'ℹ️ ')+html;if(!good)t.style.borderColor='#52303b';
-  toastEl.append(t);setTimeout(()=>t.remove(),5200);
-}
-
-/* save/load */
-function saveGame(){
-  const data={money,rebirths,multiplier,nextId,currentLuck,luckUntil,safariTokens,achievements,
-    autoBuyEnabled,spawnMultiplier,spawnBoostUntil,eventType,eventUntil,eventMultiplier,
-    lavaEventsSeen,candyEventsSeen,
-    usedCodes:[...usedCodes],
-    owned:[...owned.values()]};
-  try{localStorage.setItem('emojiRoadSaveZoo',JSON.stringify(data));}catch(e){}
-}
-function loadGame(){
-  try{
-    const raw=localStorage.getItem('emojiRoadSaveZoo');if(!raw)return;
-    const d=JSON.parse(raw);
-    money=d.money||0;rebirths=d.rebirths||0;multiplier=d.multiplier||1;nextId=d.nextId||1;
-    currentLuck=d.currentLuck||1;luckUntil=d.luckUntil||0;
-    safariTokens=d.safariTokens||0;
-    achievements=d.achievements||{phoenix:false};
-    autoBuyEnabled=!!d.autoBuyEnabled;
-    spawnMultiplier=d.spawnMultiplier||1;
-    spawnBoostUntil=d.spawnBoostUntil||0;
-    eventType=d.eventType||null;
-    eventUntil=d.eventUntil||0;
-    eventMultiplier=d.eventMultiplier||1;
-    lavaEventsSeen=d.lavaEventsSeen||0;
-    candyEventsSeen=d.candyEventsSeen||0;
-    usedCodes=new Set(d.usedCodes||[]);
-    owned.clear();(d.owned||[]).forEach(o=>owned.set(o.id,o));
-    applyEventVisuals();
-    drawOwned();refreshWorkshops();updateBeefCount();updateSafari();updateAchievements();updateStats(true);
-  }catch(e){}
-}
-setInterval(saveGame,10000);
-
-/* zoo */
-const tRexEmoji='🦖';
-function renderZooShop(){
-  zooShop.innerHTML='';
-  const all=[...zooAnimals,tRexEmoji];
-  all.forEach(e=>{
-    const card=document.createElement('div');card.className='zoo-card';
-    const em=document.createElement('div');em.className='zoo-emoji';em.textContent=e;
-    const rare=(e===tRexEmoji)?'INSANELY TRANSCENDENT':(zooAnimals.includes(e)?'Epic':'Epic');
-    const rspan=document.createElement('div');rspan.className='small';
-    rspan.innerHTML=`<span class="chip ${'r-'+rare.replaceAll(' ','\\ ')}">${rare}</span>`;
-    const price=zooPrices[e]||200;
-    const priceEl=document.createElement('div');priceEl.className='small';priceEl.textContent=`Safari: ${price}`;
-    const btn=document.createElement('button');btn.className='btn-mini zoo';btn.textContent='Adopt';
-    btn.onclick=()=>{
-      if(safariTokens<price){notify('Not enough Safari Tokens.',false);return;}
-      safariTokens-=price;updateSafari();
-      const r=rare==='INSANELY TRANSCENDENT'?'INSANELY TRANSCENDENT':'Epic';
-      giveEmojiDirect(e,r,true);
-      notify('New zoo friend adopted!',true);
-    };
-    card.append(em,rspan,priceEl,btn);zooShop.append(card);
-  });
-}
-function updateSafari(){
-  safariStat.textContent='Safari: '+fmt(Math.floor(safariTokens));
-  safariInfo.textContent='Safari Tokens: '+fmt(Math.floor(safariTokens));
-  const animals=[...owned.values()].filter(o=>o.isAnimal);
-  zooOwned.textContent='Animals: '+animals.length;
-}
-
-/* bootstrap */
-function refreshWorkshops(){refreshFuse();refreshCraft();}
-function bootstrap(){
-  loadGame();
-  if(owned.size===0)money=250;
-  updateStats(true);updateSafari();updateAchievements();updateBeefCount();
-  scheduleRandom();scheduleGuaranteed();tickIncome();
-  for(let i=0;i<3;i++)spawnOne(pickRandomRarity());
-  restockDealer();renderZooShop();refreshWorkshops();
-  setTimeout(traderAppear,15000);
-
-  // auto event timers
-  setInterval(()=>startEvent('lava'),2*60*60*1000);
-  setInterval(()=>startEvent('candy'),3*60*60*1000);
-}
-bootstrap();
-</script>
-</body>
-</html>
+function renderBaseList(){
+  baseList.innerHTML='';
+  Object.entries(BASES).forEach(([key,b])=>{
+    const unlocked=b.condition();
+    const btn=document.createElement('button');
+    btn.className='btn-mini';
+    btn.textContent=b.label+(key===currentBaseKey?' (ON)':'');
+    btn.disabled=!unlocked;
+    if(key===currentBaseKey) btn.style.outline='2px solid #4fd1c5';
